@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Ganss.Xss;
 
 namespace InputValidation.Models;
 
@@ -20,6 +21,9 @@ namespace InputValidation.Models;
 
 public class Student
 {
+
+    private string address;
+
     public int Id { get; set; }
 
     [RegularExpression(@"^[A-Z]+[a-zA-Z]*$",ErrorMessage = "First Name must contain only letters")]
@@ -34,6 +38,16 @@ public class Student
     public string LastName { get; set; } = string.Empty;
 
 
-    [AllowedValues("Male", "Female",  ErrorMessage = "Only 'Male' and 'Female' are allowed")]
+    [AllowedValues("Male", "Female", ErrorMessage = "Only 'Male' and 'Female' are allowed")]
     public string Gender { get; set; } = string.Empty;
+
+
+    public string Email { get; set; } = string.Empty;
+
+
+    public string Address
+    {
+        get => address;
+        set => address = new HtmlSanitizer().Sanitize(value); // html sanitization => remove the harmful html tags like <script> to avoid xss attacks (notion => SecureCoding)
+    }
 }
